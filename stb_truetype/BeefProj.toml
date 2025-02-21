@@ -1,0 +1,9 @@
+FileVersion = 1
+
+[Project]
+Name = "stb_truetype"
+TargetType = "BeefLib"
+StartupObject = "stb_truetype.Program"
+
+[Configs.Debug.Win64]
+LibPaths = ["$(ProjectDir)/libs/stb_truetype-windows.lib"]

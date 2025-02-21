@@ -1,0 +1,6 @@
+FileVersion = 1
+Dependencies = {corlib = "*", stb_image = "*", stb_image_resize2 = "*", stb_image_write = "*", stb_truetype = "*", stb_vorbis = "*", stb_rect_pack = "*"}
+
+[Project]
+Name = "example"
+StartupObject = "example.Program"

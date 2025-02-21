@@ -1,0 +1,5 @@
+FileVersion = 1
+Projects = {stb_image = {Path = "stb_image"}, stb_image_resize2 = {Path = "stb_image_resize2"}, stb_image_write = {Path = "stb_image_write"}, example = {Path = "example"}, stb_truetype = {Path = "stb_truetype"}, stb_vorbis = {Path = "stb_vorbis"}, stb_rect_pack = {Path = "stb_rect_pack"}}
+
+[Workspace]
+StartupProject = "example"

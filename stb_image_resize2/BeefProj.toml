@@ -1,0 +1,9 @@
+FileVersion = 1
+
+[Project]
+Name = "stb_image_resize2"
+TargetType = "BeefLib"
+StartupObject = "stb_image_resize2.Program"
+
+[Configs.Debug.Win64]
+LibPaths = ["$(ProjectDir)/libs/stb_image_resize2-windows.lib"]
