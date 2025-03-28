@@ -2,8 +2,9 @@ FileVersion = 1
 
 [Project]
 Name = "stb_image_write"
-TargetType = "BeefLib"
-StartupObject = "stb_image_write.Program"
 
 [Configs.Debug.Win64]
-LibPaths = ["$(ProjectDir)/libs/stb_image_write-windows.lib"]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\stb_image_write_d.lib"]
+
+[Configs.Release.Win64]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\stb_image_write.lib"]

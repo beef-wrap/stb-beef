@@ -70,14 +70,14 @@ public static class stb_rect_pack
 	//       INCLUDE SECTION
 	//
 
-	const int STB_RECT_PACK_VERSION  = 1;
-	const int STBRP__MAXVAL  = 0x7fffffff;
+	const c_int STB_RECT_PACK_VERSION  = 1;
+	const c_int STBRP__MAXVAL  = 0x7fffffff;
 
 	typealias stbrp_coord = c_int;
 
 	// Mostly for internal use, but this is the maximum supported coordinate value.
 
-	[CLink] public static extern c_int stbrp_pack_rects(stbrp_context* context, stbrp_rect* rects, int num_rects);
+	[CLink] public static extern c_int stbrp_pack_rects(stbrp_context* context, stbrp_rect* rects, c_int num_rects);
 	// Assign packed locations to rectangles. The rectangles are of type
 	// 'stbrp_rect' defined below, stored in the array 'rects', and there
 	// are 'num_rects' many of them.
@@ -106,15 +106,15 @@ public static class stb_rect_pack
 	public struct stbrp_rect
 	{
 	   // reserved for your use:
-		int            id;
+		c_int           id;
 
 	   // input:
-		stbrp_coord    w, h;
+		stbrp_coord    	w, h;
 
 	   // output:
-		stbrp_coord    x, y;
-		int            was_packed; // non-zero if valid packing
-	}; // 16 bytes, nominally
+		stbrp_coord    	x, y;
+		c_int           was_packed; // non-zero if valid packing
+	} // 16 bytes, nominally
 
 	// Initialize a rectangle packer to:
 	//    pack a rectangle that is 'width' by 'height' in dimensions
@@ -135,27 +135,27 @@ public static class stb_rect_pack
 	//
 	// If you do #2, then the non-quantized algorithm will be used, but the algorithm
 	// may run out of temporary storage and be unable to pack some rectangles.
-	[CLink] public static extern void stbrp_init_target(stbrp_context* context, int width, int height, stbrp_node* nodes, int num_nodes);
+	[CLink] public static extern void stbrp_init_target(stbrp_context* context, c_int width, c_int height, stbrp_node* nodes, c_int num_nodes);
 
 	// Optionally call this function after init but before doing any packing to
 	// change the handling of the out-of-temp-memory scenario, described above.
 	// If you call init again, this will be reset to the default (false).
-	[CLink] public static extern void stbrp_setup_allow_out_of_mem(stbrp_context* context, int allow_out_of_mem);
+	[CLink] public static extern void stbrp_setup_allow_out_of_mem(stbrp_context* context, c_int allow_out_of_mem);
 
 
 	// Optionally select which packing heuristic the library should use. Different
 	// heuristics will produce better/worse results for different data sets.
 	// If you call init again, this will be reset to the default.
-	[CLink] public static extern void stbrp_setup_heuristic(stbrp_context* context, int heuristic);
+	[CLink] public static extern void stbrp_setup_heuristic(stbrp_context* context, c_int heuristic);
 
 
 	[CRepr, AllowDuplicates]
-	public enum stbrp_heuristic
+	public enum stbrp_heuristic : c_int
 	{
 		STBRP_HEURISTIC_Skyline_default = 0,
 		STBRP_HEURISTIC_Skyline_BL_sortHeight = STBRP_HEURISTIC_Skyline_default,
 		STBRP_HEURISTIC_Skyline_BF_sortHeight
-	};
+	}
 
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -168,17 +168,17 @@ public static class stb_rect_pack
 	{
 		stbrp_coord x, y;
 		stbrp_node* next;
-	};
+	}
 
 	[CRepr]
 	public struct stbrp_context
 	{
-		int width;
-		int height;
-		int align;
-		int init_mode;
-		int heuristic;
-		int num_nodes;
+		c_int width;
+		c_int height;
+		c_int align;
+		c_int init_mode;
+		c_int heuristic;
+		c_int num_nodes;
 		stbrp_node* active_head;
 		stbrp_node* free_head;
 		stbrp_node[2] extra; // we allocate two extra nodes so optimal user-node-count is 'width' not 'width+2'

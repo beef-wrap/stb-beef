@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Collections;
+using System.Interop;
 using static stb.stb_image;
 using static stb.stb_image_resize2;
 using static stb.stb_image_write;
@@ -15,7 +16,9 @@ class Program
 {
 	public static int Main(String[] args)
 	{
-		int x = 0, y = 0, n = 0;
+		c_int x = 0;
+		c_int y = 0;
+		c_int n = 0;
 		uint8* data = stbi_load("test.png", &x, &y, &n, 0);
 
 		Debug.WriteLine($"width: {x}, height: {y}, channels: {n}");
@@ -36,10 +39,10 @@ class Program
 
 		List<uint8> ttf_buffer = scope .();
 		stbtt_fontinfo font;
-		int w = 0;
-		int h = 0;
-		int c = 65;
-		int s = 20;
+		c_int w = 0;
+		c_int h = 0;
+		c_int c = 65;
+		c_int s = 20;
 
 		File.ReadAll("c:/windows/fonts/arial.ttf", ttf_buffer);
 
@@ -47,7 +50,7 @@ class Program
 
 		let bitmap = stbtt_GetCodepointBitmap(&font, 0, stbtt_ScaleForPixelHeight(&font, s), c, &w, &h, null, null);
 
-		int error;
+		c_int error;
 
 		let ogg = stb_vorbis_open_filename("example.ogg", &error, null);
 

@@ -72,6 +72,7 @@ namespace stb;
 
 public static class stb_vorbis
 {
+	typealias char = c_char;
 	//////////////////////////////////////////////////////////////////////////////
 	//
 	//  HEADER BEGINS HERE
@@ -113,8 +114,8 @@ public static class stb_vorbis
 	[CRepr]
 	public struct stb_vorbis_alloc
 	{
-		c_char* alloc_buffer;
-		int   alloc_buffer_length_in_bytes;
+		char* alloc_buffer;
+		c_int   alloc_buffer_length_in_bytes;
 	}
 
 
@@ -124,22 +125,22 @@ public static class stb_vorbis
 	public struct stb_vorbis_info
 	{
 		c_uint sample_rate;
-		int channels;
+		c_int channels;
 
 		c_uint setup_memory_required;
 		c_uint setup_temp_memory_required;
 		c_uint temp_memory_required;
 
-		int max_frame_size;
+		c_int max_frame_size;
 	}
 
 	[CRepr]
 	public struct stb_vorbis_comment
 	{
-		public c_char* vendor;
+		public char* vendor;
 
-		public int comment_list_length;
-		public c_char** comment_list;
+		public c_int comment_list_length;
+		public char** comment_list;
 	}
 
 	// get general information about the file
@@ -174,7 +175,7 @@ public static class stb_vorbis
 	// and stb_vorbis may not have enough data to work with and you will
 	// need to give it the same data again PLUS more. Note that the Vorbis
 	// specification does not bound the size of an individual frame.
-	[CLink] public static extern stb_vorbis* stb_vorbis_open_pushdata(c_uchar* datablock, c_int datablock_length_in_bytes, int* datablock_memory_consumed_in_bytes, int* error, stb_vorbis_alloc* alloc_buffer);
+	[CLink] public static extern stb_vorbis* stb_vorbis_open_pushdata(c_uchar* datablock, c_int datablock_length_in_bytes, c_int* datablock_memory_consumed_in_bytes, c_int* error, stb_vorbis_alloc* alloc_buffer);
 
 	// create a vorbis decoder by passing in the initial data block containing
 	//    the ogg&vorbis headers (you don't need to do parse them, just provide
@@ -216,7 +217,7 @@ public static class stb_vorbis
 	// them or modify their contents. They are transient and will be overwritten
 	// once you ask for more data to get decoded, so be sure to grab any data
 	// you need before then.
-	[CLink] public static extern c_int stb_vorbis_decode_frame_pushdata(stb_vorbis* f, c_uchar* datablock, c_int datablock_length_in_bytes, int* channels, float*** output, int* samples);
+	[CLink] public static extern c_int stb_vorbis_decode_frame_pushdata(stb_vorbis* f, c_uchar* datablock, c_int datablock_length_in_bytes, c_int* channels, float*** output, c_int* samples);
 
 	// inform stb_vorbis that your next datablock will not be contiguous with
 	// previous ones (e.g. you've seeked in the data); future attempts to decode
@@ -243,25 +244,25 @@ public static class stb_vorbis
 	// just want to go ahead and use pushdata.)
 
 #if !STB_VORBIS_NO_STDIO && !STB_VORBIS_NO_INTEGER_CONVERSION
-	[CLink] public static extern c_int stb_vorbis_decode_filename(c_char* filename, int* channels, int* sample_rate, c_short** output);
+	[CLink] public static extern c_int stb_vorbis_decode_filename(char* filename, c_int* channels, c_int* sample_rate, c_short** output);
 #endif
 
 #if !STB_VORBIS_NO_INTEGER_CONVERSION
-	[CLink] public static extern c_int stb_vorbis_decode_memory(c_uchar* mem, c_int len, int* channels, int* sample_rate, c_short** output);
+	[CLink] public static extern c_int stb_vorbis_decode_memory(c_uchar* mem, c_int len, c_int* channels, c_int* sample_rate, c_short** output);
 #endif
 	// decode an entire file and output the data interleaved into a malloc()ed
 	// buffer stored in *output. The return value is the number of samples
 	// decoded, or -1 if the file could not be opened or was not an ogg vorbis file.
 	// When you're done with it, just free() the pointer returned in *output.
 
-	[CLink] public static extern stb_vorbis* stb_vorbis_open_memory(c_uchar* data, c_int len, int* error, stb_vorbis_alloc* alloc_buffer);
+	[CLink] public static extern stb_vorbis* stb_vorbis_open_memory(c_uchar* data, c_int len, c_int* error, stb_vorbis_alloc* alloc_buffer);
 	// create an ogg vorbis decoder from an ogg vorbis stream in memory (note
 	// this must be the entire stream!). on failure, returns NULL and sets *error
 
 #if !STB_VORBIS_NO_STDIO
 	// create an ogg vorbis decoder from a filename via fopen(). on failure,
 	// returns NULL and sets *error (possibly to VORBIS_file_open_failure).
-	[CLink] public static extern stb_vorbis* stb_vorbis_open_filename(c_char* filename, int* error, stb_vorbis_alloc* alloc_buffer);
+	[CLink] public static extern stb_vorbis* stb_vorbis_open_filename(char* filename, c_int* error, stb_vorbis_alloc* alloc_buffer);
 
 	// create an ogg vorbis decoder from an open FILE *, looking for a stream at
 	// the _current_ seek point (ftell). on failure, returns NULL and sets *error.
@@ -270,14 +271,14 @@ public static class stb_vorbis
 	// perform stb_vorbis_seek_*() operations on this file, it will assume it
 	// owns the _entire_ rest of the file after the start point. Use the next
 	// function, stb_vorbis_open_file_section(), to limit it.
-	//[CLink] public static extern stb_vorbis* stb_vorbis_open_file(FILE* f, c_int close_handle_on_close, int* error, stb_vorbis_alloc* alloc_buffer);
+	//[CLink] public static extern stb_vorbis* stb_vorbis_open_file(FILE* f, c_int close_handle_on_close, c_int* error, stb_vorbis_alloc* alloc_buffer);
 
 	// create an ogg vorbis decoder from an open FILE *, looking for a stream at
 	// the _current_ seek point (ftell); the stream will be of length 'len' bytes.
 	// on failure, returns NULL and sets *error. note that stb_vorbis must "own"
 	// this stream; if you seek it in between calls to stb_vorbis, it will become
 	// confused.
-	//[CLink] public static extern stb_vorbis* stb_vorbis_open_file_section(FILE* f, c_int close_handle_on_close, int* error, stb_vorbis_alloc* alloc_buffer, c_uint len);
+	//[CLink] public static extern stb_vorbis* stb_vorbis_open_file_section(FILE* f, c_int close_handle_on_close, c_int* error, stb_vorbis_alloc* alloc_buffer, c_uint len);
 #endif
 	// these functions seek in the Vorbis file to (approximately) 'sample_number'.
 	// after calling seek_frame(), the next call to get_frame_*() will include
@@ -304,7 +305,7 @@ public static class stb_vorbis
 	//
 	// You generally should not intermix calls to stb_vorbis_get_frame_*()
 	// and stb_vorbis_get_samples_*(), since the latter calls the former.
-	[CLink] public static extern c_int stb_vorbis_get_frame_float(stb_vorbis* f, int* channels, float*** output);
+	[CLink] public static extern c_int stb_vorbis_get_frame_float(stb_vorbis* f, c_int* channels, float*** output);
 
 #if !STB_VORBIS_NO_INTEGER_CONVERSION
 	// decode the next frame and return the number of *samples* per channel.
@@ -355,8 +356,7 @@ public static class stb_vorbis
 #endif
 
 	////////   ERROR CODES
-	[CRepr]
-	public enum STBVorbisError
+	public enum STBVorbisError : c_int
 	{
 		VORBIS__no_error,
 

@@ -2,8 +2,9 @@ FileVersion = 1
 
 [Project]
 Name = "stb_vorbis"
-TargetType = "BeefLib"
-StartupObject = "stb_vorbis.Program"
 
 [Configs.Debug.Win64]
-LibPaths = ["$(ProjectDir)/libs/stb_vorbis-windows.lib"]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\stb_vorbis_d.lib"]
+
+[Configs.Release.Win64]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\stb_vorbis.lib"]

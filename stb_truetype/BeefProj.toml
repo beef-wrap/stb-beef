@@ -2,8 +2,9 @@ FileVersion = 1
 
 [Project]
 Name = "stb_truetype"
-TargetType = "BeefLib"
-StartupObject = "stb_truetype.Program"
 
 [Configs.Debug.Win64]
-LibPaths = ["$(ProjectDir)/libs/stb_truetype-windows.lib"]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\stb_truetype_d.lib"]
+
+[Configs.Release.Win64]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\stb_truetype.lib"]

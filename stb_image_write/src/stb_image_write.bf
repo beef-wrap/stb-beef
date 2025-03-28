@@ -149,31 +149,35 @@ LICENSE
 */
 
 using System;
+using System.Interop;
 
 namespace stb;
 
 public static class stb_image_write
 {
 #if !STBI_WRITE_NO_STDIO
-	[CLink] public static extern int stbi_write_png(char8* filename, int w, int h, int comp, void* data, int stride_in_bytes);
-	[CLink] public static extern int stbi_write_bmp(char8* filename, int w, int h, int comp, void* data);
-	[CLink] public static extern int stbi_write_tga(char8* filename, int w, int h, int comp, void* data);
-	[CLink] public static extern int stbi_write_hdr(char8* filename, int w, int h, int comp, float* data);
-	[CLink] public static extern int stbi_write_jpg(char8* filename, int x, int y, int comp, void* data, int quality);
+	[CLink] public static extern c_int stbi_write_png(char8* filename, c_int w, c_int h, c_int comp, void* data, c_int stride_in_bytes);
+	[CLink] public static extern c_int stbi_write_bmp(char8* filename, c_int w, c_int h, c_int comp, void* data);
+	[CLink] public static extern c_int stbi_write_tga(char8* filename, c_int w, c_int h, c_int comp, void* data);
+	[CLink] public static extern c_int stbi_write_hdr(char8* filename, c_int w, c_int h, c_int comp, float* data);
+	[CLink] public static extern c_int stbi_write_jpg(char8* filename, c_int x, c_int y, c_int comp, void* data, c_int quality);
 
-#if STBIW_WINDOWS_UTF8
-	[CLink] public static extern int stbiw_convert_wchar_to_utf8(char8* buffer, size_t bufferlen wchar_t* input);
+#if true //STBIW_WINDOWS_UTF8
+	typealias size_t = uint;
+	typealias wchar_t = c_wchar;
+
+	[CLink] public static extern c_int stbiw_convert_wchar_to_utf8(char8* buffer, size_t bufferlen, wchar_t* input);
 #endif
 
 #endif
 
-	function void stbi_write_func(void* context, void* data, int size);
+	function void stbi_write_func(void* context, void* data, c_int size);
 
-	[CLink] public static extern int stbi_write_png_to_func(stbi_write_func* func, void* context, int w, int h, int comp, void* data, int stride_in_bytes);
-	[CLink] public static extern int stbi_write_bmp_to_func(stbi_write_func* func, void* context, int w, int h, int comp, void* data);
-	[CLink] public static extern int stbi_write_tga_to_func(stbi_write_func* func, void* context, int w, int h, int comp, void* data);
-	[CLink] public static extern int stbi_write_hdr_to_func(stbi_write_func* func, void* context, int w, int h, int comp, float* data);
-	[CLink] public static extern int stbi_write_jpg_to_func(stbi_write_func* func, void* context, int x, int y, int comp, void* data, int quality);
+	[CLink] public static extern c_int stbi_write_png_to_func(stbi_write_func* func, void* context, c_int w, c_int h, c_int comp, void* data, c_int stride_in_bytes);
+	[CLink] public static extern c_int stbi_write_bmp_to_func(stbi_write_func* func, void* context, c_int w, c_int h, c_int comp, void* data);
+	[CLink] public static extern c_int stbi_write_tga_to_func(stbi_write_func* func, void* context, c_int w, c_int h, c_int comp, void* data);
+	[CLink] public static extern c_int stbi_write_hdr_to_func(stbi_write_func* func, void* context, c_int w, c_int h, c_int comp, float* data);
+	[CLink] public static extern c_int stbi_write_jpg_to_func(stbi_write_func* func, void* context, c_int x, c_int y, c_int comp, void* data, c_int quality);
 
-	[CLink] public static extern void stbi_flip_vertically_on_write(int flip_boolean);
+	[CLink] public static extern void stbi_flip_vertically_on_write(c_int flip_boolean);
 }

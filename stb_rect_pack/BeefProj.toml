@@ -2,9 +2,10 @@ FileVersion = 1
 
 [Project]
 Name = "stb_rect_pack"
-TargetType = "BeefLib"
-StartupObject = "stb_rectpack.Program"
 DefaultNamespace = "stb_rectpack"
 
 [Configs.Debug.Win64]
-LibPaths = ["$(ProjectDir)\\libs\\stb_rect_pack-windows.lib"]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\stb_rect_pack_d.lib"]
+
+[Configs.Release.Win64]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\stb_rect_pack.lib"]

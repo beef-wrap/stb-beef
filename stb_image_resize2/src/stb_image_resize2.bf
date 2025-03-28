@@ -341,7 +341,7 @@
 	  2.07 (2024-05-24) fix for slow final split during threaded conversions of very 
 						  wide scanlines when downsampling (caused by extra input 
 						  converting), fix for wide scanline resamples with many 
-						  splits (int overflow), fix GCC warning.
+						  splits (c_int overflow), fix GCC warning.
 	  2.06 (2024-02-10) fix for identical width/height 3x or more down-scaling 
 						  undersampling a single row on rare resize ratios (about 1%).
 	  2.05 (2024-02-07) fix for 2 pixel to 1 pixel resizes with wrap (thanks Aras),
@@ -373,7 +373,7 @@ static class stb_image_resize2
 #if _MSC_VER
 	typedef stbir_uint8 unsigned char    ;
 	typedef stbir_uint16 unsigned short   ;
-	typedef stbir_uint32 unsigned int     ;
+	typedef stbir_uint32 unsigned c_int     ;
 	typedef stbir_uint64 unsigned __int64 ;
 #else
 	typealias stbir_uint8 = uint8;
@@ -401,7 +401,7 @@ static class stb_image_resize2
 	//   whether color is premultiplied by alpha
 	// for back compatibility, you can cast the old channel count to an stbir_pixel_layout
 	[CRepr, AllowDuplicates]
-	public enum stbir_pixel_layout
+	public enum stbir_pixel_layout : c_int
 	{
 		STBIR_1CHANNEL = 1,
 		STBIR_2CHANNEL = 2,
@@ -436,11 +436,11 @@ static class stb_image_resize2
 	//
 	//    If output_pixels is NULL (0), then we will allocate the buffer and return it to you.
 	//--------------------------------
-	[CLink] public static extern c_uchar* stbir_resize_uint8_srgb(c_uchar* input_pixels, int input_w, int input_h, int input_stride_in_bytes, c_uchar* output_pixels, int output_w, int output_h, int output_stride_in_bytes, stbir_pixel_layout pixel_type);
+	[CLink] public static extern c_uchar* stbir_resize_uint8_srgb(c_uchar* input_pixels, c_int input_w, c_int input_h, c_int input_stride_in_bytes, c_uchar* output_pixels, c_int output_w, c_int output_h, c_int output_stride_in_bytes, stbir_pixel_layout pixel_type);
 
-	[CLink] public static extern c_uchar* stbir_resize_uint8_linear(c_uchar* input_pixels, int input_w, int input_h, int input_stride_in_bytes, c_uchar* output_pixels, int output_w, int output_h, int output_stride_in_bytes, stbir_pixel_layout pixel_type);
+	[CLink] public static extern c_uchar* stbir_resize_uint8_linear(c_uchar* input_pixels, c_int input_w, c_int input_h, c_int input_stride_in_bytes, c_uchar* output_pixels, c_int output_w, c_int output_h, c_int output_stride_in_bytes, stbir_pixel_layout pixel_type);
 
-	[CLink] public static extern float* stbir_resize_float_linear(float* input_pixels, int input_w, int input_h, int input_stride_in_bytes, float* output_pixels, int output_w, int output_h, int output_stride_in_bytes, stbir_pixel_layout pixel_type);
+	[CLink] public static extern float* stbir_resize_float_linear(float* input_pixels, c_int input_w, c_int input_h, c_int input_stride_in_bytes, float* output_pixels, c_int output_w, c_int output_h, c_int output_stride_in_bytes, stbir_pixel_layout pixel_type);
 
 	//===============================================================
 	
@@ -454,17 +454,15 @@ static class stb_image_resize2
 	//     * Filter can be selected explicitly
 	//--------------------------------
 
-	[CRepr]
-	public enum stbir_edge
+	public enum stbir_edge : c_int
 	{
 		STBIR_EDGE_CLAMP   = 0,
 		STBIR_EDGE_REFLECT = 1,
 		STBIR_EDGE_WRAP    = 2, // this edge mode is slower and uses more memory
 		STBIR_EDGE_ZERO    = 3,
-	};
+	}
 
-	[CRepr]
-	public enum stbir_filter
+	public enum stbir_filter : c_int
 	{
 		STBIR_FILTER_DEFAULT      = 0, // use same filter type that easy-to-use API chooses
 		STBIR_FILTER_BOX          = 1, // A trapezoid w/1-pixel wide ramps, same result as box for integer scale ratios
@@ -476,8 +474,7 @@ static class stb_image_resize2
 		STBIR_FILTER_OTHER        = 7, // User callback specified
 	}
 
-	[CRepr]
-	public enum stbir_datatype
+	public enum stbir_datatype : c_int
 	{
 		STBIR_TYPE_UINT8            = 0,
 		STBIR_TYPE_UINT8_SRGB       = 1,
@@ -488,7 +485,7 @@ static class stb_image_resize2
 	}
 
 	// medium api
-	[CLink] public static extern void* stbir_resize(void* input_pixels, int input_w, int input_h, int input_stride_in_bytes, void* output_pixels, int output_w, int output_h, int output_stride_in_bytes, stbir_pixel_layout pixel_layout, stbir_datatype data_type, stbir_edge edge, stbir_filter filter);
+	[CLink] public static extern void* stbir_resize(void* input_pixels, c_int input_w, c_int input_h, c_int input_stride_in_bytes, void* output_pixels, c_int output_w, c_int output_h, c_int output_stride_in_bytes, stbir_pixel_layout pixel_layout, stbir_datatype data_type, stbir_edge edge, stbir_filter filter);
 	//===============================================================
 	
 	
@@ -521,10 +518,10 @@ static class stb_image_resize2
 	// Types:
 	
 	// INPUT CALLBACK: this callback is used for input scanlines
-	function void* stbir_input_callback(void* optional_output, void* input_ptr, int num_pixels, int x, int y, void* context);
+	function void* stbir_input_callback(void* optional_output, void* input_ptr, c_int num_pixels, c_int x, c_int y, void* context);
 
 	// OUTPUT CALLBACK: this callback is used for output scanlines
-	function void stbir_output_callback(void* output_ptr, int num_pixels, int y, void* context);
+	function void stbir_output_callback(void* output_ptr, c_int num_pixels, c_int y, void* context);
 
 	// callbacks for user installed filters
 	function float stbir__kernel_callback(float x, float scale, void* user_data); // centered at zero
@@ -538,19 +535,19 @@ static class stb_image_resize2
 	{
 		void* user_data;
 		void* input_pixels;
-		int input_w, input_h;
+		c_int input_w, input_h;
 		double input_s0, input_t0, input_s1, input_t1;
 		stbir_input_callback* input_cb;
 		void* output_pixels;
-		int output_w, output_h;
-		int output_subx, output_suby, output_subw, output_subh;
+		c_int output_w, output_h;
+		c_int output_subx, output_suby, output_subw, output_subh;
 		stbir_output_callback* output_cb;
-		int input_stride_in_bytes;
-		int output_stride_in_bytes;
-		int splits;
-		int fast_alpha;
-		int needs_rebuild;
-		int called_alloc;
+		c_int input_stride_in_bytes;
+		c_int output_stride_in_bytes;
+		c_int splits;
+		c_int fast_alpha;
+		c_int needs_rebuild;
+		c_int called_alloc;
 		stbir_pixel_layout input_pixel_layout_public;
 		stbir_pixel_layout output_pixel_layout_public;
 		stbir_datatype input_data_type;
@@ -569,7 +566,7 @@ static class stb_image_resize2
 	
 	// First off, you must ALWAYS call stbir_resize_init on your resize structure before any of the other calls!
 	// input_stride_in_bytes and output_stride_in_bytes can both be zero
-	[CLink] public static extern void stbir_resize_init(STBIR_RESIZE* resize, void* input_pixels, int input_w, int input_h, int input_stride_in_bytes, void* output_pixels, int output_w, int output_h, int output_stride_in_bytes, stbir_pixel_layout pixel_layout, stbir_datatype data_type);
+	[CLink] public static extern void stbir_resize_init(STBIR_RESIZE* resize, void* input_pixels, c_int input_w, c_int input_h, c_int input_stride_in_bytes, void* output_pixels, c_int output_w, c_int output_h, c_int output_stride_in_bytes, stbir_pixel_layout pixel_layout, stbir_datatype data_type);
 
 	//===============================================================
 	// You can update these parameters any time after resize_init and there is no cost
@@ -578,7 +575,7 @@ static class stb_image_resize2
 	[CLink] public static extern void stbir_set_datatypes(STBIR_RESIZE* resize, stbir_datatype input_type, stbir_datatype output_type);
 	[CLink] public static extern void stbir_set_pixel_callbacks(STBIR_RESIZE* resize, stbir_input_callback* input_cb, stbir_output_callback* output_cb); // no callbacks by default
 	[CLink] public static extern void stbir_set_user_data(STBIR_RESIZE* resize, void* user_data); // pass back STBIR_RESIZE* by default
-	[CLink] public static extern void stbir_set_buffer_ptrs(STBIR_RESIZE* resize, void* input_pixels, int input_stride_in_bytes, void* output_pixels, int output_stride_in_bytes);
+	[CLink] public static extern void stbir_set_buffer_ptrs(STBIR_RESIZE* resize, void* input_pixels, c_int input_stride_in_bytes, void* output_pixels, c_int output_stride_in_bytes);
 
 	//===============================================================
 	
@@ -587,21 +584,21 @@ static class stb_image_resize2
 	// If you call any of these functions, you will trigger a sampler rebuild!
 	//--------------------------------
 
-	[CLink] public static extern int stbir_set_pixel_layouts(STBIR_RESIZE* resize, stbir_pixel_layout input_pixel_layout, stbir_pixel_layout output_pixel_layout); // sets new buffer layouts
-	[CLink] public static extern int stbir_set_edgemodes(STBIR_RESIZE* resize, stbir_edge horizontal_edge, stbir_edge vertical_edge); // CLAMP by default
+	[CLink] public static extern c_int stbir_set_pixel_layouts(STBIR_RESIZE* resize, stbir_pixel_layout input_pixel_layout, stbir_pixel_layout output_pixel_layout); // sets new buffer layouts
+	[CLink] public static extern c_int stbir_set_edgemodes(STBIR_RESIZE* resize, stbir_edge horizontal_edge, stbir_edge vertical_edge); // CLAMP by default
 
-	[CLink] public static extern int stbir_set_filters(STBIR_RESIZE* resize, stbir_filter horizontal_filter, stbir_filter vertical_filter); // STBIR_DEFAULT_FILTER_UPSAMPLE/DOWNSAMPLE by default
-	[CLink] public static extern int stbir_set_filter_callbacks(STBIR_RESIZE* resize, stbir__kernel_callback* horizontal_filter, stbir__support_callback* horizontal_support, stbir__kernel_callback* vertical_filter, stbir__support_callback* vertical_support);
+	[CLink] public static extern c_int stbir_set_filters(STBIR_RESIZE* resize, stbir_filter horizontal_filter, stbir_filter vertical_filter); // STBIR_DEFAULT_FILTER_UPSAMPLE/DOWNSAMPLE by default
+	[CLink] public static extern c_int stbir_set_filter_callbacks(STBIR_RESIZE* resize, stbir__kernel_callback* horizontal_filter, stbir__support_callback* horizontal_support, stbir__kernel_callback* vertical_filter, stbir__support_callback* vertical_support);
 
-	[CLink] public static extern int stbir_set_pixel_subrect(STBIR_RESIZE* resize, int subx, int suby, int subw, int subh); // sets both sub-regions (full regions by default)
-	[CLink] public static extern int stbir_set_input_subrect(STBIR_RESIZE* resize, double s0, double t0, double s1, double t1); // sets input sub-region (full region by default)
-	[CLink] public static extern int stbir_set_output_pixel_subrect(STBIR_RESIZE* resize, int subx, int suby, int subw, int subh); // sets output sub-region (full region by default)
+	[CLink] public static extern c_int stbir_set_pixel_subrect(STBIR_RESIZE* resize, c_int subx, c_int suby, c_int subw, c_int subh); // sets both sub-regions (full regions by default)
+	[CLink] public static extern c_int stbir_set_input_subrect(STBIR_RESIZE* resize, double s0, double t0, double s1, double t1); // sets input sub-region (full region by default)
+	[CLink] public static extern c_int stbir_set_output_pixel_subrect(STBIR_RESIZE* resize, c_int subx, c_int suby, c_int subw, c_int subh); // sets output sub-region (full region by default)
 
 	// when inputting AND outputting non-premultiplied alpha pixels, we use a slower but higher quality technique
 	//   that fills the zero alpha pixel's RGB values with something plausible.  If you don't care about areas of
 	//   zero alpha, you can call this function to get about a 25% speed improvement for STBIR_RGBA to STBIR_RGBA
 	//   types of resizes.
-	[CLink] public static extern int stbir_set_non_pm_alpha_speed_over_quality(STBIR_RESIZE* resize, int non_pma_alpha_speed_over_quality);
+	[CLink] public static extern c_int stbir_set_non_pm_alpha_speed_over_quality(STBIR_RESIZE* resize, c_int non_pma_alpha_speed_over_quality);
 
 	//===============================================================
 	
@@ -613,7 +610,7 @@ static class stb_image_resize2
 	//--------------------------------
 	
 	// This builds the samplers and does one allocation
-	[CLink] public static extern int stbir_build_samplers(STBIR_RESIZE* resize);
+	[CLink] public static extern c_int stbir_build_samplers(STBIR_RESIZE* resize);
 
 	// You MUST call this, if you call stbir_build_samplers or stbir_build_samplers_with_splits
 	[CLink] public static extern void stbir_free_samplers(STBIR_RESIZE* resize);
@@ -621,7 +618,7 @@ static class stb_image_resize2
 	//===============================================================
 
 	// And this is the main function to perform the resize synchronously on one thread.
-	[CLink] public static extern int stbir_resize_extended(STBIR_RESIZE* resize);
+	[CLink] public static extern c_int stbir_resize_extended(STBIR_RESIZE* resize);
 
 	//===============================================================
 	// Use these functions for multithreading.
@@ -634,7 +631,7 @@ static class stb_image_resize2
 	//   You can pass in the number of threads you'd like to use (try_splits).
 	//   It returns the number of splits (threads) that you can call it with.
 	///  It might be less if the image resize can't be split up that many ways.
-	[CLink] public static extern int stbir_build_samplers_with_splits(STBIR_RESIZE* resize, int try_splits);
+	[CLink] public static extern c_int stbir_build_samplers_with_splits(STBIR_RESIZE* resize, c_int try_splits);
 
 	// This function does a split of the resizing (you call this fuction for each
 	// split, on multiple threads). A split is a piece of the output resize pixel space.
@@ -647,7 +644,7 @@ static class stb_image_resize2
 	//   only 4 threads, you can use 0,2,4,6 for the split_start's and use "2" for the
 	//   split_count each time to turn in into a 4 thread resize. (This is unusual).
 
-	[CLink] public static extern int stbir_resize_extended_split(STBIR_RESIZE* resize, int split_start, int split_count);
+	[CLink] public static extern c_int stbir_resize_extended_split(STBIR_RESIZE* resize, c_int split_start, c_int split_count);
 	//===============================================================
 	
 	
@@ -669,21 +666,21 @@ static class stb_image_resize2
 	//   callback that you don't want to zero.
 	//
 	//     First example, progress: (getting a callback that you can monitor the progress):
-	//        void const * my_callback(void* optional_output, void const * input_ptr, int num_pixels, int x, int y, void* context)
+	//        void const * my_callback(void* optional_output, void const * input_ptr, c_int num_pixels, c_int x, c_int y, void* context)
 	//        {
 	//           percentage_done = y / input_height;
 	//           return input_ptr;  // use buffer from call
 	//        }
 	//
 	//     Next example, copying: (copy from some other buffer or stream):
-	//        void const * my_callback(void* optional_output, void const * input_ptr, int num_pixels, int x, int y, void* context)
+	//        void const * my_callback(void* optional_output, void const * input_ptr, c_int num_pixels, c_int x, c_int y, void* context)
 	//        {
 	//           CopyOrStreamData(optional_output, other_data_src, num_pixels * pixel_width_in_bytes);
 	//           return optional_output;  // return the optional buffer that we filled
 	//        }
 	//
 	//     Third example, input another buffer without copying: (zero-copy from other buffer):
-	//        void const * my_callback(void* optional_output, void const * input_ptr, int num_pixels, int x, int y, void* context)
+	//        void const * my_callback(void* optional_output, void const * input_ptr, c_int num_pixels, c_int x, c_int y, void* context)
 	//        {
 	//           void* pixels = ((char*) other_image_base) + (y * other_image_stride) + (x * other_pixel_width_in_bytes);
 	//           return pixels;       // return pointer to your data without copying
@@ -695,7 +692,7 @@ static class stb_image_resize2
 	//   like TGA or BMP. You can also convert to other output types here if you want.
 	//
 	//   Simple example:
-	//        void const * my_output(void* output_ptr, int num_pixels, int y, void* context)
+	//        void const * my_output(void* output_ptr, c_int num_pixels, c_int y, void* context)
 	//        {
 	//           percentage_done = y / output_height;
 	//           fwrite(output_ptr, pixel_width_in_bytes, num_pixels, output_file);
@@ -729,7 +726,7 @@ static class stb_image_resize2
 	[CLink] public static extern void stbir_resize_extended_profile_info(STBIR_PROFILE_INFO* out_info, STBIR_RESIZE* resize);
 
 	// use after calling stbir_resize_extended_split
-	[CLink] public static extern void stbir_resize_split_profile_info(STBIR_PROFILE_INFO* out_info, STBIR_RESIZE* resize, int split_start, int split_num);
+	[CLink] public static extern void stbir_resize_split_profile_info(STBIR_PROFILE_INFO* out_info, STBIR_RESIZE* resize, c_int split_start, c_int split_num);
 
 	//===============================================================
 #endif
